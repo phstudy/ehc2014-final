@@ -15,7 +15,8 @@ baseurl = "http://puppet-vagrant-boxes.puppetlabs.com/centos-64-x64-vbox4210-noc
 # 
 Vagrant.configure("2") do |config|
   # manage /etc/hosts by hostmanager plugin(https://github.com/smdahlen/vagrant-hostmanager)
-  config.hostmanager.enabled = true
+
+  #config.hostmanager.enabled = true
   # use loop to generate multiple VMs with similar configurations
   (1..NUM_BOXES).each do |i|
     is_main = (i == 1) || (i == 2)
@@ -26,11 +27,12 @@ Vagrant.configure("2") do |config|
       vm1.vm.box_url = baseurl
       
       vm1.vm.provider :virtualbox do |vb|
-	vb.customize ["modifyvm", :id, "--memory", "5120"]
+	vb.customize ["modifyvm", :id, "--memory", "7680"]
+        vb.customize ["modifyvm", :id, "--cpus", "4"]
       end
       
       vm1.vm.network :private_network, ip: ip_from_num(i)
-      vm1.vm.hostname = "vm#{i}".to_sym
+      #vm1.vm.hostname = "vm#{i}".to_sym
 
       vm1.vm.provision :shell do |shell|
         if is_main
@@ -41,9 +43,9 @@ Vagrant.configure("2") do |config|
       end
 
       # Sync /etc/hosts for each node
-      vm1.vm.provision :hostmanager
+      #vm1.vm.provision :hostmanager
       # Sync Disk folders to each VM
-      vm1.vm.synced_folder "disk#{i}", "/data"
+      vm1.vm.synced_folder "disk#{i}", "/data1"
 
     end
 
